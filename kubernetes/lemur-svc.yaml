@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: lemur
   name: lemur
 spec:
   selector:
     app: lemur
   ports:
     - name: http
-      port: 80
+      port: 8000
       protocol: TCP
-      targetPort: 8080
+      targetPort: 8000

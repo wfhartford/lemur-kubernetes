@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: lemur
   name: lemur
   labels:
     app: lemur
@@ -16,27 +17,34 @@ spec:
     spec:
       containers:
         - name: lemur
-          image: docker.repo.zepower.com/lemur:
-          serviceAccount: lemur
-          command: ['echo', 'hi']
+          image: quay.io/wfhartford/lemur-web:latest
           env:
-            - name: NAME
-              value: "the value"
-            - name: MY_POD_NAME
+            - name: POSTGRES_HOST
+              value: postgres
+            - name: LEMUR_CONF
+              value: /usr/local/src/lemur/lemur.conf.py
+            - name: LEMUR_DB_PASSWORD
               valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: MY_POD_NAMESPACE
+                secretKeyRef:
+                  name: lemur
+                  key: database-password
+            # POSTGRES_PASSWORD only required on first startup to create lemur DB
+            - name: POSTGRES_PASSWORD
               valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: MY_POD_IP
+                secretKeyRef:
+                  name: init
+                  key: postgres-password
+                  optional: true
+            # LEMUR_PASSWORD is only required on first startup to create lemur user
+            - name: LEMUR_PASSWORD
               valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
+                secretKeyRef:
+                  name: init
+                  key: lemur-password
+                  optional: true
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 8000
           resources:
             limits:
               memory: 1Gi
@@ -44,25 +52,18 @@ spec:
             requests:
               memory: 100Mi
               cpu: 500m
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: http
-            initialDelaySeconds: 30
-            timeoutSeconds: 1
-            periodSeconds: 5
-          readinessProbe:
-            exec:
-              command:
-                - cat
-                - /tmp/healthy
-            initialDelaySeconds: 5
-            timeoutSeconds: 1
-            periodSeconds: 5
+#          livenessProbe:
+#            httpGet:
+#              path: /
+#              port: http
+#            initialDelaySeconds: 30
+#            timeoutSeconds: 1
+#            periodSeconds: 5
           volumeMounts:
-            - name: data
-              mountPath: /data
+            - name: config
+              mountPath: /lemur-config
+              readOnly: true
       volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: lemur
+        - name: config
+          configMap:
+            name: lemur
