@@ -15,7 +15,7 @@ db_not_ready() {
 }
 
 wait_db() {
-    for i in $(seq 1 10); do
+    while true; do
         echo -e "\033[1mAttempt to connect to db.. try #$i\033[0m"
         sudo -u postgres psql -h ${POSTGRES_HOST} --command 'select 1;' && return 0
         sleep $SLEEP
