@@ -23,7 +23,7 @@ wait_db() {
     return 1
 }
 
-if [ ! -z ${POSTGRES_PASSWORD+x} -a ! -z ${LEMUR_PASSWORD+x} ]
+if [ -n ${POSTGRES_PASSWORD+x} -a -n ${LEMUR_PASSWORD+x} ]
 then
   PG_HOME=$(awk -F: -v v="postgres" '{if ($1==v) print $6}' /etc/passwd)
   touch ${PG_HOME}/.pgpass
@@ -49,7 +49,7 @@ cd /usr/local/src/lemur/lemur
 
 export PATH=/usr/local/src/lemur/venv/bin:${PATH}
 
-if [ ! -z ${POSTGRES_PASSWORD+x} -a ! -z ${LEMUR_PASSWORD+x} ]
+if [ -n ${POSTGRES_PASSWORD+x} -a -n ${LEMUR_PASSWORD+x} ]
 then
   python manage.py init -p password
 fi
