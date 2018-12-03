@@ -1,4 +1,4 @@
-FROM quay.io/wfhartford/lemur:latest
+FROM quay.io/wfhartford/lemur-web:latest
 
 RUN apt-get -qq update && \
   apt-get -qq install -y --no-install-recommends nginx && \
