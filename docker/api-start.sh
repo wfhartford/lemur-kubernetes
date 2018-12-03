@@ -23,28 +23,34 @@ wait_db() {
     return 1
 }
 
-PG_HOME=$(awk -F: -v v="postgres" '{if ($1==v) print $6}' /etc/passwd)
-touch ${PG_HOME}/.pgpass
-chown postgres:postgres ${PG_HOME}/.pgpass
-chmod 0600 ${PG_HOME}/.pgpass
-echo "${POSTGRES_HOST}:5432:*:postgres:${POSTGRES_PASSWORD}" > ${PG_HOME}/.pgpass
+if [ ! -z ${POSTGRES_PASSWORD+x} -a ! -z ${LEMUR_PASSWORD+x} ]
+then
+  PG_HOME=$(awk -F: -v v="postgres" '{if ($1==v) print $6}' /etc/passwd)
+  touch ${PG_HOME}/.pgpass
+  chown postgres:postgres ${PG_HOME}/.pgpass
+  chmod 0600 ${PG_HOME}/.pgpass
+  echo "${POSTGRES_HOST}:5432:*:postgres:${POSTGRES_PASSWORD}" > ${PG_HOME}/.pgpass
 
-echo "Waiting for db to become available"
-wait_db
-[ "x$?" == "x0" ] && printf "db ready!\n\n" || db_not_ready
+  echo "Waiting for db to become available"
+  wait_db
+  [ "x$?" == "x0" ] && printf "db ready!\n\n" || db_not_ready
 
-echo "Creating lemurdb..."
-sudo -u postgres psql -h ${POSTGRES_HOST} --command "CREATE DATABASE lemur;"
-echo "Creating the lemur user..."
-sudo -u postgres psql -h ${POSTGRES_HOST} --command "CREATE USER lemur WITH PASSWORD 'lemur';"
-echo "Changing postgres password..."
-sudo -u postgres psql -h ${POSTGRES_HOST} --command "GRANT ALL PRIVILEGES ON DATABASE lemur to lemur;"
-echo "Done changing postgres password..."
-echo "DONE CREATING lemurdb..."
+  echo "Creating lemurdb..."
+  sudo -u postgres psql -h ${POSTGRES_HOST} --command "CREATE DATABASE lemur;"
+  echo "Creating the lemur user..."
+  sudo -u postgres psql -h ${POSTGRES_HOST} --command "CREATE USER lemur WITH PASSWORD '${LEMUR_DB_PASSWORD}';"
+  echo "Changing postgres password..."
+  sudo -u postgres psql -h ${POSTGRES_HOST} --command "GRANT ALL PRIVILEGES ON DATABASE lemur to lemur;"
+  echo "Done changing postgres password..."
+  echo "DONE CREATING lemurdb..."
+fi
 
 cd /usr/local/src/lemur/lemur
 
 export PATH=/usr/local/src/lemur/venv/bin:${PATH}
 
-python manage.py init -p password
+if [ ! -z ${POSTGRES_PASSWORD+x} -a ! -z ${LEMUR_PASSWORD+x} ]
+then
+  python manage.py init -p password
+fi
 python manage.py start -w 6 -b 0.0.0.0:8000

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lemur
+data:
+  lemur.properties: |
+    key=value
