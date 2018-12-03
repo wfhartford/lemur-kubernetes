@@ -26,6 +26,10 @@ echo "Waiting for db to become available"
 wait_db
 [ "x$?" == "x0" ] && printf "db ready!\n\n" || db_not_ready
 
+PG_HOME=$(sudo -u postgres echo $HOME)
+echo "${POSTGRES_HOST}:5432:*:postgres:${POSTGRES_PASSWORD}" > ${PG_HOME}/.pgpass
+chown postgres:postgres ${PG_HOME}/.pgpass
+chmod 0600 ${PG_HOME}/.pgpass
 
 echo "Creating lemurdb..."
 sudo -u postgres psql -h ${POSTGRES_HOST} --command "CREATE DATABASE lemur;"
