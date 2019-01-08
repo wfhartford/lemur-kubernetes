@@ -16,7 +16,7 @@ db_not_ready() {
 
 wait_db() {
     while true; do
-        echo -e "\033[1mAttempt to connect to db.. try #$i\033[0m"
+        echo -e "\033[1mAttempt to connect to db..\033[0m"
         sudo -u postgres psql -h ${POSTGRES_HOST} --command 'select 1;' && return 0
         sleep $SLEEP
     done
@@ -51,6 +51,8 @@ export PATH=/usr/local/src/lemur/venv/bin:${PATH}
 
 if [[ -n ${POSTGRES_PASSWORD+x} && -n ${LEMUR_PASSWORD+x} ]]
 then
+  echo "Initialising lemur user..."
   python manage.py init -p ${LEMUR_PASSWORD}
+  echo "Done initialising lemur user."
 fi
 python manage.py start -w 6 -b 0.0.0.0:8000
