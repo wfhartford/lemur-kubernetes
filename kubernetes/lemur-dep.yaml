@@ -18,7 +18,7 @@ spec:
       serviceAccount: lemur
       containers:
         - name: lemur
-          image: lemur:0.7.0-custom
+          image: quay.io/wfhartford/lemur-web:latest
           env:
             - name: POSTGRES_HOST
               value: postgres
