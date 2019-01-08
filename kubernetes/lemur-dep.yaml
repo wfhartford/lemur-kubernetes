@@ -15,9 +15,10 @@ spec:
       labels:
         app: lemur
     spec:
+      serviceAccount: lemur
       containers:
         - name: lemur
-          image: quay.io/wfhartford/lemur-web:latest
+          image: lemur:0.7.0-custom
           env:
             - name: POSTGRES_HOST
               value: postgres

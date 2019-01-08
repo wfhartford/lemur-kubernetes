@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: quay.io/wfhartford/lemur-nginx:latest
+          image: nginx-lemur:0.7.0-custom
           ports:
             - name: http
               containerPort: 80
