@@ -24,6 +24,21 @@ spec:
               value: postgres
             - name: LEMUR_CONF
               value: /usr/local/src/lemur/lemur.conf.py
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: lemur
+                  key: flask-secret-key
+            - name: LEMUR_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: lemur
+                  key: lemur-token-secret
+            - name: LEMUR_ENCRYPTION_KEYS
+              valueFrom:
+                secretKeyRef:
+                  name: lemur
+                  key: lemur-encryption-keys
             - name: LEMUR_DB_PASSWORD
               valueFrom:
                 secretKeyRef:

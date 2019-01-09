@@ -21,11 +21,11 @@ data:
     debug = False
 
     # this is the secret key used by flask session management
-    SECRET_KEY = 'hvDtIoyjAHT/iiuOxmYbA1SGBZMa5+9sgllk08GVvXoSbQ0kJ9arlA=='
+    SECRET_KEY = os.environ['SECRET_KEY']
 
     # You should consider storing these separately from your config
-    LEMUR_TOKEN_SECRET = 'p1foIa7n5+nB1GnEpR4Wf2B2UgzUiBT1BHtB5WnTNoJSMVKhdXu1FA=='
-    LEMUR_ENCRYPTION_KEYS = ['yWdKiDFE_TAvoTx-E-Cn1sbbktAbmGwjbZGNBXshys4=']
+    LEMUR_TOKEN_SECRET = os.environ['LEMUR_TOKEN_SECRET']
+    LEMUR_ENCRYPTION_KEYS = os.environ['LEMUR_ENCRYPTION_KEYS']
 
     # this is a list of domains as regexes that only admins can issue
     LEMUR_RESTRICTED_DOMAINS = []
